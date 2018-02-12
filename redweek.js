@@ -52,6 +52,7 @@ function filterResults(res) {
     rawFilteredPostingsString=rawFilteredPostingsString.concat(f+"\r\n");
   })
   //overwrite most recent postings to textfile
+  console.log("Newest postings: ",rawFilteredPostingsString)
   writeFile('postings.txt', rawFilteredPostingsString, function (err) {
     if (err) return console.log(err)
     console.log("Overwrote file")
@@ -111,7 +112,6 @@ function runner(){
     }
   };
 }
-
 
 //Run it once initially to populate postings.txt
 var request = makeHttpObject();
