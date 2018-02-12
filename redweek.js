@@ -132,17 +132,17 @@ request.onreadystatechange = function() {
       rawFilteredPostingsString=rawFilteredPostingsString.concat(f+"\r\n");
     })
     //overwrite most recent postings to textfile
+    console.log(rawFilteredPostingsString)
     writeFile('postings.txt', rawFilteredPostingsString, function (err) {
       console.log("Populating postings.txt")      
       if (err) return console.log(err)
-      console.log(rawFilteredPostingsString)
     });
   }
 };
 
-//runs program every 5 minutes
+//runs program every 3 minutes
 setInterval(function() {
   runner();
   var request = makeHttpObject();
   request.open("GET", process.env.appURL, true);
-}, 300000);
+}, 180000);
