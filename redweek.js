@@ -1,3 +1,12 @@
+// Stephen A. Friedman
+// friedmansemail@gmail.com
+
+// This is a text message notification service that sends links
+// to new postings for the Marriott Aruba on Redweek.com
+
+// Twilio is used to send the text messages
+// Heroku hosts the service
+
 var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 var unique = require('array-unique');
 var read = require('read-file');
@@ -27,6 +36,7 @@ function makeHttpObject() {
   throw new Error("Could not create HTTP request object.");
 }
 
+//clean incioming postst, read old postings, compare with new, update postings.txt
 function filterResults(res) {
   let filtered = new Array(res.length)
   filtered = unique(res);
@@ -36,18 +46,19 @@ function filterResults(res) {
     comparePostings(oldPostings,filtered);  
   });
 
-    //stringify newest (unique) postings
-    var rawFilteredPostingsString = "";
-    filtered.forEach(function(f){
-      rawFilteredPostingsString=rawFilteredPostingsString.concat(f+"\r\n");
-    })
-    //overwrite most recent postings to textfile
-    writeFile('postings.txt', rawFilteredPostingsString, function (err) {
-      if (err) return console.log(err)
-      console.log("Overwrote file")
-    })
+  //stringify newest (unique) postings
+  var rawFilteredPostingsString = "";
+  filtered.forEach(function(f){
+    rawFilteredPostingsString=rawFilteredPostingsString.concat(f+"\r\n");
+  })
+  //overwrite most recent postings to textfile
+  writeFile('postings.txt', rawFilteredPostingsString, function (err) {
+    if (err) return console.log(err)
+    console.log("Overwrote file")
+  })
 }
 
+//determines if there are new postings and sends text
 function comparePostings(oldPosts, newPosts) {
   var textMessage = "";
   newPosts.forEach(function(newPost) {
@@ -122,24 +133,16 @@ request.onreadystatechange = function() {
     })
     //overwrite most recent postings to textfile
     writeFile('postings.txt', rawFilteredPostingsString, function (err) {
+      console.log("Populating postings.txt")      
       if (err) return console.log(err)
       console.log(rawFilteredPostingsString)
-      console.log("Populating postings.txt")
     });
   }
 };
-//runs program once a minute
+
+//runs program every 5 minutes
 setInterval(function() {
   runner();
   var request = makeHttpObject();
   request.open("GET", process.env.appURL, true);
 }, 300000);
-
-
-
-
-
-  
-
-
-
