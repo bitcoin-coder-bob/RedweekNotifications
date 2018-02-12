@@ -1,0 +1,28 @@
+{
+  "name": "redweek",
+  "version": "1.0.0",
+  "description": "",
+  "main": "redweek.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node redweek.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stephenfriedman/Redweek.git"
+  },
+  "author": "stephen friedman",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/stephenfriedman/Redweek/issues"
+  },
+  "homepage": "https://github.com/stephenfriedman/Redweek#readme",
+  "dependencies": {
+    "array-unique": "^0.3.2",
+    "express": "^4.16.2",
+    "read-file": "^0.2.0",
+    "twilio": "^3.11.0",
+    "write-file": "^1.0.0",
+    "xmlhttprequest": "^1.8.0"
+  }
+}
