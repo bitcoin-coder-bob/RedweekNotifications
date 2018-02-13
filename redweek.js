@@ -24,7 +24,7 @@ var unique = require('array-unique');
 let redweekUrl = 'https://www.redweek.com/resort/P4872-marriotts-aruba-surf-club/rentals?sort-rentals=newest&amp;type=rentals&amp;sort=newest';
 var express = require('express');
 var server = express();
-//var server_port = ENV_PORT  || 80;
+var server_port = ENV_PORT  || 80;
 var server_host = '0.0.0.0';
 server.listen(server_port, server_host, function() {
     console.log('Listening on port %d', server_port);
