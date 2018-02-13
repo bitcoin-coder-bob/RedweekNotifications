@@ -40,56 +40,55 @@ function makeHttpObject() {
 function filterResults(res) {
   let filtered = new Array(res.length)
   filtered = unique(res);
-  var oldPostings;
-  read('postings.txt', 'utf8', function(err, buffer) {
-    var oldPostings = buffer;
-    comparePostings(oldPostings,filtered);  
-  });
-
+  // read('postings.txt', 'utf8', function(err, buffer) {
+  //   comparePostings(buffer,filtered);  
+  // });
+  comparePostings(globalPostings,filtered);
   //stringify newest (unique) postings
   var rawFilteredPostingsString = "";
   filtered.forEach(function(f){
     rawFilteredPostingsString=rawFilteredPostingsString.concat(f+"\r\n");
   })
+  
   //overwrite most recent postings to textfile
   console.log("Newest postings: ",rawFilteredPostingsString)
-  writeFile('postings.txt', rawFilteredPostingsString, function (err) {
-    if (err) return console.log(err)
-    console.log("Overwrote file")
-  })
+  // writeFile('postings.txt', rawFilteredPostingsString, function (err) {
+  //   if (err) return console.log(err)
+  //   console.log("Overwrote file")
+  // })
 }
 
 //determines if there are new postings and sends text
-function comparePostings(oldPosts, newPosts) {
+function comparePostings(storedPosts, newPosts) {
   var textMessage = "";
   newPosts.forEach(function(newPost) {
-   if(!oldPosts.includes(newPost)){
+   if(!storedPosts.includes(newPost)){
     textMessage=textMessage.concat("https://www.redweek.com"+newPost+" \r\n")
    }
   });
   if(textMessage!="") {
     console.log(new Date().toLocaleString());
     console.log("Sending text: "+textMessage);
-    client.messages.create(
-      {
-        body: textMessage,
-        to: process.env.to,
-        from: process.env.from
-      },
-      (err, message) => {
-        process.stdout.write(message.sid);
-      }
-    );
-    client.messages.create(
-      {
-        body: textMessage,
-        to: process.env.to2,
-        from: process.env.from
-      },
-      (err, message) => {
-        process.stdout.write(message.sid);
-      }
-    );
+    // client.messages.create(
+    //   {
+    //     body: textMessage,
+    //     to: process.env.to,
+    //     from: process.env.from
+    //   },
+    //   (err, message) => {
+    //     process.stdout.write(message.sid);
+    //   }
+    // );
+    // client.messages.create(
+    //   {
+    //     body: textMessage,
+    //     to: process.env.to2,
+    //     from: process.env.from
+    //   },
+    //   (err, message) => {
+    //     process.stdout.write(message.sid);
+    //   }
+    // );
   }
   else{
     console.log(new Date().toLocaleString());
@@ -115,6 +114,7 @@ function runner(){
 
 //Run it once initially to populate postings.txt
 var request = makeHttpObject();
+var globalPostings;
 request.open("GET", redweekUrl, true);
 request.send(null);
 request.onreadystatechange = function() {
@@ -132,11 +132,12 @@ request.onreadystatechange = function() {
       rawFilteredPostingsString=rawFilteredPostingsString.concat(f+"\r\n");
     })
     //overwrite most recent postings to textfile
-    console.log(rawFilteredPostingsString)
-    writeFile('postings.txt', rawFilteredPostingsString, function (err) {
-      console.log("Populating postings.txt")      
-      if (err) return console.log(err)
-    });
+    globalPostings=rawFilteredPostingsString;
+    console.log("GLOBAL_POSTINGS: ",globalPostings)
+    // writeFile('postings.txt', rawFilteredPostingsString, function (err) {
+    //   console.log("Populating postings.txt")      
+    //   if (err) return console.log(err)
+    // });
   }
 };
 
@@ -145,4 +146,4 @@ setInterval(function() {
   runner();
   var request = makeHttpObject();
   request.open("GET", process.env.appURL, true);
-}, 180000);
+}, 3000);
