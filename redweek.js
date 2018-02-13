@@ -101,7 +101,7 @@ function runner(){
 
 //Run it once initially to populate postings.txt
 var request = makeHttpObject();
-var globalPostings;
+var globalPostings=[];
 request.open("GET", redweekUrl, true);
 request.send(null);
 request.onreadystatechange = function() {
