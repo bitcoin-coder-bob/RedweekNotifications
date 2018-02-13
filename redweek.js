@@ -6,13 +6,13 @@
 
 // Twilio is used to send the text messages
 // Heroku hosts the service
-// const ENV_PORT= process.env.PORT;
-// const ENV_ACCOUNT_SID = process.env.accountSid;
-// const ENV_AUTH_TOKEN = process.env.authToken;
-// const ENV_FROM = process.env.from;
-// const ENV_TO = process.env.to;
-// const ENV_TO2 = process.env.to2;
-// const ENV_APP_URL = process.env.appURL;
+const ENV_PORT= process.env.PORT;
+const ENV_ACCOUNT_SID = process.env.accountSid;
+const ENV_AUTH_TOKEN = process.env.authToken;
+const ENV_FROM = process.env.from;
+const ENV_TO = process.env.to;
+const ENV_TO2 = process.env.to2;
+const ENV_APP_URL = process.env.appURL;
 
 
 
@@ -22,15 +22,15 @@ var unique = require('array-unique');
 //const writeFile = require('write-file')
 
 let redweekUrl = 'https://www.redweek.com/resort/P4872-marriotts-aruba-surf-club/rentals?sort-rentals=newest&amp;type=rentals&amp;sort=newest';
-// var express = require('express');
-// var server = express();
-// //var server_port = ENV_PORT  || 80;
-// var server_host = '0.0.0.0';
-// server.listen(server_port, server_host, function() {
-//     console.log('Listening on port %d', server_port);
-// });
+var express = require('express');
+var server = express();
+//var server_port = ENV_PORT  || 80;
+var server_host = '0.0.0.0';
+server.listen(server_port, server_host, function() {
+    console.log('Listening on port %d', server_port);
+});
 
-//const client = require('twilio')(ENV_ACCOUNT_SID, ENV_AUTH_TOKEN);
+const client = require('twilio')(ENV_ACCOUNT_SID, ENV_AUTH_TOKEN);
 
 function makeHttpObject() {
   try {return new XMLHttpRequest();}
@@ -52,13 +52,13 @@ function filterResults(res) {
   // });
   comparePostings(globalPostings,filtered);
   //stringify newest (unique) postings
-  var rawFilteredPostingsString = "";
-  filtered.forEach(function(f){
-    rawFilteredPostingsString=rawFilteredPostingsString.concat(f+"\r\n");
-  })
+  // var rawFilteredPostingsString = "";
+  // filtered.forEach(function(f){
+  //   rawFilteredPostingsString=rawFilteredPostingsString.concat(f+"\r\n");
+  // })
   
   //overwrite most recent postings to textfile
-  console.log("Newest postings: \r\n",rawFilteredPostingsString)
+  //console.log("Newest postings: \r\n",rawFilteredPostingsString)
   // writeFile('postings.txt', rawFilteredPostingsString, function (err) {
   //   if (err) return console.log(err)
   //   console.log("Overwrote file")
@@ -67,7 +67,7 @@ function filterResults(res) {
 
 //determines if there are new postings and sends text
 function comparePostings(storedPosts, newPosts) {
-  var textMessage = "";
+  let textMessage = "";
   newPosts.forEach(function(newPost) {
    if(!storedPosts.includes(newPost)){
     textMessage=textMessage.concat("https://www.redweek.com"+newPost+" \r\n")
@@ -76,16 +76,16 @@ function comparePostings(storedPosts, newPosts) {
   if(textMessage!="") {
     console.log(new Date().toLocaleString());
     console.log("Sending text: "+textMessage);
-    // client.messages.create(
-    //   {
-    //     body: textMessage,
-    //     to: ENV_TO,
-    //     from: ENV_FROM
-    //   },
-    //   (err, message) => {
-    //     process.stdout.write(message.sid);
-    //   }
-    // );
+    client.messages.create(
+      {
+        body: textMessage,
+        to: ENV_TO,
+        from: ENV_FROM
+      },
+      (err, message) => {
+        process.stdout.write(message.sid);
+      }
+    );
     // client.messages.create(
     //   {
     //     body: textMessage,
@@ -98,9 +98,9 @@ function comparePostings(storedPosts, newPosts) {
     // );
   }
   else{
-    console.log(new Date().toLocaleString());
     console.log("no new listings, no text message sent");
   }
+  globalPostings = newPosts;
 }
 
 function runner(){
@@ -133,13 +133,13 @@ request.onreadystatechange = function() {
     let res = rawPostings;
     let filtered = new Array(res.length)
     filtered = unique(res);    
+    globalPostings=filtered;
     //stringify newest (unique) postings
-    var rawFilteredPostingsString = "";
-    filtered.forEach(function(f){
-      rawFilteredPostingsString=rawFilteredPostingsString.concat(f+"\r\n");
-    })
+    // var rawFilteredPostingsString = "";
+    // filtered.forEach(function(f){
+    //   rawFilteredPostingsString=rawFilteredPostingsString.concat(f+"\r\n");
+    // })
     //overwrite most recent postings to textfile
-    globalPostings=rawFilteredPostingsString;
     console.log("GLOBAL_POSTINGS: \r\n",globalPostings)
     // writeFile('postings.txt', rawFilteredPostingsString, function (err) {
     //   console.log("Populating postings.txt")      
@@ -151,6 +151,6 @@ request.onreadystatechange = function() {
 //runs program every 3 minutes
 setInterval(function() {
   runner();
-  //var request = makeHttpObject();
-  //request.open("GET", ENV_APP_URL, true);
-}, 180000);
+  var request = makeHttpObject();
+  request.open("GET", ENV_APP_URL, true);
+}, 60000);
