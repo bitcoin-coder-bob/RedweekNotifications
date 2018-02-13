@@ -6,24 +6,31 @@
 
 // Twilio is used to send the text messages
 // Heroku hosts the service
+// const ENV_PORT= process.env.PORT;
+// const ENV_ACCOUNT_SID = process.env.accountSid;
+// const ENV_AUTH_TOKEN = process.env.authToken;
+// const ENV_FROM = process.env.from;
+// const ENV_TO = process.env.to;
+// const ENV_TO2 = process.env.to2;
+// const ENV_APP_URL = process.env.appURL;
+
+
 
 var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 var unique = require('array-unique');
-var read = require('read-file');
-const writeFile = require('write-file')
+//var read = require('read-file');
+//const writeFile = require('write-file')
 
 let redweekUrl = 'https://www.redweek.com/resort/P4872-marriotts-aruba-surf-club/rentals?sort-rentals=newest&amp;type=rentals&amp;sort=newest';
-var express = require('express');
-var server = express();
-var server_port = process.env.PORT || 80;
-var server_host = '0.0.0.0';
-server.listen(server_port, server_host, function() {
-    console.log('Listening on port %d', server_port);
-});
+// var express = require('express');
+// var server = express();
+// //var server_port = ENV_PORT  || 80;
+// var server_host = '0.0.0.0';
+// server.listen(server_port, server_host, function() {
+//     console.log('Listening on port %d', server_port);
+// });
 
-const accountSid = process.env.accountSid;
-const authToken = process.env.authToken;
-const client = require('twilio')(accountSid, authToken);
+//const client = require('twilio')(ENV_ACCOUNT_SID, ENV_AUTH_TOKEN);
 
 function makeHttpObject() {
   try {return new XMLHttpRequest();}
@@ -51,7 +58,7 @@ function filterResults(res) {
   })
   
   //overwrite most recent postings to textfile
-  console.log("Newest postings: ",rawFilteredPostingsString)
+  console.log("Newest postings: \r\n",rawFilteredPostingsString)
   // writeFile('postings.txt', rawFilteredPostingsString, function (err) {
   //   if (err) return console.log(err)
   //   console.log("Overwrote file")
@@ -72,8 +79,8 @@ function comparePostings(storedPosts, newPosts) {
     // client.messages.create(
     //   {
     //     body: textMessage,
-    //     to: process.env.to,
-    //     from: process.env.from
+    //     to: ENV_TO,
+    //     from: ENV_FROM
     //   },
     //   (err, message) => {
     //     process.stdout.write(message.sid);
@@ -82,8 +89,8 @@ function comparePostings(storedPosts, newPosts) {
     // client.messages.create(
     //   {
     //     body: textMessage,
-    //     to: process.env.to2,
-    //     from: process.env.from
+    //     to: ENV_TO2,
+    //     from: ENV_FROM
     //   },
     //   (err, message) => {
     //     process.stdout.write(message.sid);
@@ -133,7 +140,7 @@ request.onreadystatechange = function() {
     })
     //overwrite most recent postings to textfile
     globalPostings=rawFilteredPostingsString;
-    console.log("GLOBAL_POSTINGS: ",globalPostings)
+    console.log("GLOBAL_POSTINGS: \r\n",globalPostings)
     // writeFile('postings.txt', rawFilteredPostingsString, function (err) {
     //   console.log("Populating postings.txt")      
     //   if (err) return console.log(err)
@@ -144,6 +151,6 @@ request.onreadystatechange = function() {
 //runs program every 3 minutes
 setInterval(function() {
   runner();
-  var request = makeHttpObject();
-  request.open("GET", process.env.appURL, true);
-}, 3000);
+  //var request = makeHttpObject();
+  //request.open("GET", ENV_APP_URL, true);
+}, 180000);
