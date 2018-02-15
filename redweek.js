@@ -47,7 +47,6 @@ function comparePostings(globalPosts, newPosts, resort) {
   newPosts.forEach(function(newPost) {
    if(!globalPosts.includes(newPost)){
     addToGlobal.push(newPost);
-    console.log("adding: ",newPost)
     textMessage=textMessage.concat("https://www.redweek.com"+newPost+" \r\n")
    }
   });
@@ -118,6 +117,7 @@ setInterval(function() {
     globalPostingsSurf.push(newPostSurf);
     console.log("SURF2: ", newPostSurf);
   });
+  console.log("DONE ADDING------------------------")
   var requestSurf = makeHttpObject();
   requestSurf.open("GET", ENV_APP_URL, true);
 }, 6000);
