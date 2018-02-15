@@ -81,12 +81,12 @@ function comparePostings(globalPosts, newPosts, resort) {
     );
   }
   else{
-    console.log("no new listings, no text message sent");
+    console.log("no new listings or text: ",resort);
   }
 }
 
 function runner(url, global, resort){
-  console.log(new Date().toLocaleString());
+  console.log(new Date().toLocaleString(),resort);
   var request = makeHttpObject();
   request.open("GET", url, true);
   request.send(null);
