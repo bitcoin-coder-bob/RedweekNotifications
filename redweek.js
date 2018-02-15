@@ -95,14 +95,11 @@ function runner(url, global, resort){
       //this sizing could be a problem if I keep using .push()
       let filtered = new Array(rawPostings)
       filtered = unique(rawPostings);
-      let addPosts = comparePostings(global, filtered, resort);
-      addPosts.forEach(function(post){
-        global.push(post);
-      });
-      return global;
+      return comparePostings(global, filtered, resort);
+      
     }
   };
-  return global;
+  return [];
 }
 
 runner(SURF_CLUB_URL, globalPostingsSurf, "SURF_CLUB").forEach(function(newPostSurf){
@@ -123,7 +120,7 @@ setInterval(function() {
   });
   var requestSurf = makeHttpObject();
   requestSurf.open("GET", ENV_APP_URL, true);
-}, 60000);
+}, 6000);
 
 // setInterval(function(){
 //   sendTexts=true;
