@@ -46,15 +46,12 @@ function comparePostings(globalPosts, newPosts, resort) {
   newPosts.forEach(function(newPost) {
     if(!globalPosts.includes(newPost)) {
       if(resort === "SURF_CLUB"){
-        console.log("ADDED SURF---",newPost);
+        console.log("ADDING SURF: ",newPost);
         globalPostingsSurf.push(newPost);
       }
       else if(resort === "OCEAN_CLUB"){
-        console.log("ADDED OCEAN---",newPost);
+        console.log("ADDING OCEAN: ",newPost);
         globalPostingsOcean.push(newPost);
-      }
-      else{
-        console.log("RESORT_ERROR")
       }
      textMessage=textMessage.concat("https://www.redweek.com"+newPost+" \r\n")
    }
@@ -72,16 +69,16 @@ function comparePostings(globalPosts, newPosts, resort) {
         process.stdout.write(message.sid);
       }
     );
-    // client.messages.create(
-    //   {
-    //     body: textMessage,
-    //     to: ENV_TO2,
-    //     from: ENV_FROM
-    //   },
-    //   (err, message) => {
-    //     process.stdout.write(message.sid);
-    //   }
-    // );
+    client.messages.create(
+      {
+        body: textMessage,
+        to: ENV_TO2,
+        from: ENV_FROM
+      },
+      (err, message) => {
+        process.stdout.write(message.sid);
+      }
+    );
   }
   else{
     console.log("no new listings, no text message sent");
@@ -104,21 +101,17 @@ function runner(url, global, resort){
       comparePostings(global, filtered, resort);
     }
   };
-  console.log("shouldnt reach this")
 }
 
 runner(SURF_CLUB_URL, globalPostingsSurf, "SURF_CLUB");
 runner(OCEAN_CLUB_URL, globalPostingsOcean, "OCEAN_CLUB");
 
-//runs program every 3 minutes
 setInterval(function() {
   sendTexts=true;
   runner(SURF_CLUB_URL, globalPostingsSurf, "SURF_CLUB");
-  console.log("SURF: ", globalPostingsSurf);
-}, 15000);
+}, 120000);
 
 setInterval(function(){
   sendTexts=true;
   runner(OCEAN_CLUB_URL, globalPostingsOcean, "OCEAN_CLUB");
-  console.log("OCEAN: ", globalPostingsOcean);
-}, 20000);
+}, 130000);
