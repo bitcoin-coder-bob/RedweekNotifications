@@ -47,6 +47,7 @@ function comparePostings(globalPosts, newPosts, resort) {
   newPosts.forEach(function(newPost) {
    if(!globalPosts.includes(newPost)){
     addToGlobal.push(newPost);
+    console.log("adding: ",newPost)
     textMessage=textMessage.concat("https://www.redweek.com"+newPost+" \r\n")
    }
   });
@@ -108,10 +109,10 @@ runner(SURF_CLUB_URL, globalPostingsSurf, "SURF_CLUB").forEach(function(newPostS
   globalPostingsSurf.push(newPostSurf);
   console.log("SURF1: ", newPostSurf);
 });
-runner(OCEAN_CLUB_URL, globalPostingsOcean, "OCEAN_CLUB").forEach(function(newPostOcean){
-  globalPostingsOcean.push(newPostOcean);
-  console.log("OCEAN1: ", newPostOcean);
-});
+// runner(OCEAN_CLUB_URL, globalPostingsOcean, "OCEAN_CLUB").forEach(function(newPostOcean){
+//   globalPostingsOcean.push(newPostOcean);
+//   console.log("OCEAN1: ", newPostOcean);
+// });
 
 //runs program every 3 minutes
 setInterval(function() {
@@ -124,10 +125,10 @@ setInterval(function() {
   requestSurf.open("GET", ENV_APP_URL, true);
 }, 60000);
 
-setInterval(function(){
-  sendTexts=true;
-  runner(OCEAN_CLUB_URL, globalPostingsOcean, "OCEAN_CLUB").forEach(function(newPostOcean){
-    globalPostingsOcean.push(newPostOcean);
-    console.log("OCEAN2: ", newPostOcean);
-  });
-}, 66000);
+// setInterval(function(){
+//   sendTexts=true;
+//   runner(OCEAN_CLUB_URL, globalPostingsOcean, "OCEAN_CLUB").forEach(function(newPostOcean){
+//     globalPostingsOcean.push(newPostOcean);
+//     console.log("OCEAN2: ", newPostOcean);
+//   });
+// }, 66000);
