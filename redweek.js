@@ -113,7 +113,7 @@ runner(SURF_CLUB_URL, globalPostingsSurf, "SURF_CLUB").forEach(function(newPostS
 
 //runs program every 3 minutes
 setInterval(function() {
-  sendTexts=true;
+  //sendTexts=true;
   runner(SURF_CLUB_URL, globalPostingsSurf, "SURF_CLUB").forEach(function(newPostSurf){
     globalPostingsSurf.push(newPostSurf);
     console.log("SURF2: ", newPostSurf);
