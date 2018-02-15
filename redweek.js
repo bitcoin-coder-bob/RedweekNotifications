@@ -26,7 +26,8 @@ server.listen(server_port, server_host, function() {
     console.log('Listening on port %d', server_port);
 });
 var sendTexts = false;
-
+var globalPostingsSurf = [];
+var globalPostingsOcean = [];
 
 function makeHttpObject() {
   try {return new XMLHttpRequest();}
