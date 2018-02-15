@@ -98,6 +98,7 @@ function runner(url, global, resort){
       
     }
   };
+  console.log("shouldnt reach this")
   return [];
 }
 
