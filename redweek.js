@@ -46,12 +46,12 @@ function comparePostings(globalPosts, newPosts, resort) {
   newPosts.forEach(function(newPost) {
     if(!globalPosts.includes(newPost)) {
       if(resort === "SURF_CLUB"){
-        console.log("SURF: ",newPost)
-        globalPostingsSurf.push(newPost)
+        console.log("ADDED SURF---");
+        globalPostingsSurf.push(newPost);
       }
       else if(resort === "OCEAN_CLUB"){
-        console.log("OCEAN: ",newPost)
-        globalPostingsOcean.push(newPost)
+        console.log("ADDED OCEAN---");
+        globalPostingsOcean.push(newPost);
       }
       else{
         console.log("RESORT_ERROR")
@@ -99,7 +99,7 @@ function runner(url, global, resort){
     if (request.readyState == 4){
       let rawPostings = request.responseText.match(regex);
       //this sizing could be a problem if I keep using .push()
-      let filtered = new Array(rawPostings)
+      let filtered = new Array(rawPostings);
       filtered = unique(rawPostings);
       comparePostings(global, filtered, resort);
       
@@ -108,31 +108,18 @@ function runner(url, global, resort){
   console.log("shouldnt reach this")
 }
 
-runner(SURF_CLUB_URL, globalPostingsSurf, "SURF_CLUB");//.forEach(function(newPostSurf){
-//   globalPostingsSurf.push(newPostSurf);
-//   console.log("SURF1: ", newPostSurf);
-// });
-// runner(OCEAN_CLUB_URL, globalPostingsOcean, "OCEAN_CLUB").forEach(function(newPostOcean){
-//   globalPostingsOcean.push(newPostOcean);
-//   console.log("OCEAN1: ", newPostOcean);
-// });
+runner(SURF_CLUB_URL, globalPostingsSurf, "SURF_CLUB");
+runner(OCEAN_CLUB_URL, globalPostingsOcean, "OCEAN_CLUB");
 
 //runs program every 3 minutes
 setInterval(function() {
   //sendTexts=true;
-  runner(SURF_CLUB_URL, globalPostingsSurf, "SURF_CLUB");//.forEach(function(newPostSurf){
-  //   globalPostingsSurf.push(newPostSurf);
-  //   console.log("SURF2: ", newPostSurf);
-  // });
-  console.log("DONE ADDING------------------------")
-  var requestSurf = makeHttpObject();
-  requestSurf.open("GET", ENV_APP_URL, true);
+  runner(SURF_CLUB_URL, globalPostingsSurf, "SURF_CLUB");
+  console.log("SURF: ", globalPostingsSurf);
 }, 6000);
 
-// setInterval(function(){
-//   sendTexts=true;
-//   runner(OCEAN_CLUB_URL, globalPostingsOcean, "OCEAN_CLUB").forEach(function(newPostOcean){
-//     globalPostingsOcean.push(newPostOcean);
-//     console.log("OCEAN2: ", newPostOcean);
-//   });
-// }, 66000);
+setInterval(function(){
+  //sendTexts=true;
+  runner(OCEAN_CLUB_URL, globalPostingsOcean, "OCEAN_CLUB");
+  console.log("OCEAN: ", globalPostingsOcean);
+}, 66000);
