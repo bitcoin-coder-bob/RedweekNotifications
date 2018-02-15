@@ -52,7 +52,7 @@ function comparePostings(globalPosts, newPosts, resort) {
   });
   if(textMessage!="" && sendTexts) {
     textMessage=textMessage.concat(" "+resort);
-    console.log("Sending text: "+textMessage);
+    console.log("SENDING TEXT: "+textMessage);
     client.messages.create(
       {
         body: textMessage,
@@ -106,11 +106,11 @@ function runner(url, global, resort){
 
 runner(SURF_CLUB_URL, globalPostingsSurf, "SURF_CLUB").forEach(function(newPostSurf){
   globalPostingsSurf.push(newPostSurf);
-  console.log("SURF: ", newPostSurf);
+  console.log("SURF1: ", newPostSurf);
 });
 runner(OCEAN_CLUB_URL, globalPostingsOcean, "OCEAN_CLUB").forEach(function(newPostOcean){
   globalPostingsOcean.push(newPostOcean);
-  console.log("OCEAN: ", newPostOcean);
+  console.log("OCEAN1: ", newPostOcean);
 });
 
 //runs program every 3 minutes
@@ -118,7 +118,7 @@ setInterval(function() {
   sendTexts=true;
   runner(SURF_CLUB_URL, globalPostingsSurf, "SURF_CLUB").forEach(function(newPostSurf){
     globalPostingsSurf.push(newPostSurf);
-    console.log("SURF: ", newPostSurf);
+    console.log("SURF2: ", newPostSurf);
   });
   var requestSurf = makeHttpObject();
   requestSurf.open("GET", ENV_APP_URL, true);
@@ -128,6 +128,6 @@ setInterval(function(){
   sendTexts=true;
   runner(OCEAN_CLUB_URL, globalPostingsOcean, "OCEAN_CLUB").forEach(function(newPostOcean){
     globalPostingsOcean.push(newPostOcean);
-    console.log("OCEAN: ", newPostOcean);
+    console.log("OCEAN2: ", newPostOcean);
   });
 }, 66000);
