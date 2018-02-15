@@ -13,8 +13,8 @@ const ENV_FROM = process.env.from;
 const ENV_TO = process.env.to;
 const ENV_TO2 = process.env.to2;
 const ENV_APP_URL = process.env.appURL;
-let redweekUrl = 'https://www.redweek.com/resort/P4872-marriotts-aruba-surf-club/rentals?sort-rentals=newest&amp;type=rentals&amp;sort=newest';
-
+const SURF_CLUB_URL = 'https://www.redweek.com/resort/P4872-marriotts-aruba-surf-club/rentals?sort-rentals=newest&amp;type=rentals&amp;sort=newest';
+const OCEAN_CLUB_URL = 'https://www.redweek.com/resort/P148-marriotts-aruba-ocean-club/rentals?sort-rentals=newest&amp;type=rentals&amp;sort=newest';
 const client = require('twilio')(ENV_ACCOUNT_SID, ENV_AUTH_TOKEN);
 var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 var unique = require('array-unique');
@@ -25,6 +25,7 @@ var server_host = '0.0.0.0';
 server.listen(server_port, server_host, function() {
     console.log('Listening on port %d', server_port);
 });
+var sendTexts = false;
 
 
 function makeHttpObject() {
@@ -38,24 +39,18 @@ function makeHttpObject() {
   throw new Error("Could not create HTTP request object.");
 }
 
-//clean incioming postst, read old postings, compare with new, update postings.txt
-function filterResults(res) {
-  let filtered = new Array(res.length)
-  filtered = unique(res);
-  comparePostings(globalPostings,filtered);
-}
-
 //determines if there are new postings and sends text
-function comparePostings(storedPosts, newPosts) {
+function comparePostings(globalPosts, newPosts, resort) {
   let textMessage = "";
+  let addToGlobal = new Array(newPosts);
   newPosts.forEach(function(newPost) {
-   if(!storedPosts.includes(newPost)){
-    globalPostings.push(newPost);
+   if(!globalPosts.includes(newPost)){
+    addToGlobal.push(newPost);
     textMessage=textMessage.concat("https://www.redweek.com"+newPost+" \r\n")
    }
   });
-  if(textMessage!="") {
-    console.log(new Date().toLocaleString());
+  if(textMessage!="" && sendTexts) {
+    textMessage=textMessage.concat(" "+resort);
     console.log("Sending text: "+textMessage);
     client.messages.create(
       {
@@ -77,52 +72,61 @@ function comparePostings(storedPosts, newPosts) {
         process.stdout.write(message.sid);
       }
     );
+    return addToGlobal;
   }
   else{
     console.log("no new listings, no text message sent");
+    return addToGlobal;
   }
 }
 
-function runner(){
+function runner(url, global, resort){
   console.log(new Date().toLocaleString());
   var request = makeHttpObject();
-  request.open("GET", redweekUrl, true);
+  request.open("GET", url, true);
   request.send(null);
   request.onreadystatechange = function() {
     //gets the regex: /posting/R
     let regex = /\/posting\/R....../g;
-    if (request.readyState == 4)
-    {
+    if (request.readyState == 4){
       let rawPostings = request.responseText.match(regex);
-      filterResults(rawPostings);
+      //this sizing could be a problem if I keep using .push()
+      let filtered = new Array(rawPostings)
+      filtered = unique(rawPostings);
+      let addPosts = comparePostings(global, filtered, resort);
+      addPosts.forEach(function(post){
+        global.push(post);
+      });
+      return global;
     }
   };
+  return global;
 }
 
-//Run it once initially to populate postings.txt
-var request = makeHttpObject();
-var globalPostings=[];
-request.open("GET", redweekUrl, true);
-request.send(null);
-request.onreadystatechange = function() {
-  //gets the regex: /posting/R
-  let regex = /\/posting\/R....../g;
-  if (request.readyState == 4)
-  {
-    let rawPostings = request.responseText.match(regex);
-    let res = rawPostings;
-    let filtered = [];//new Array(res.length)
-    filtered = unique(res);
-    filtered.forEach(function(f){
-      globalPostings.push(f);
-    }) 
-    console.log("GLOBAL_POSTINGS: \r\n",globalPostings)
-  }
-};
+runner(SURF_CLUB_URL, globalPostingsSurf, "SURF_CLUB").forEach(function(newPostSurf){
+  globalPostingsSurf.push(newPostSurf);
+  console.log("SURF: ", newPostSurf);
+});
+runner(OCEAN_CLUB_URL, globalPostingsOcean, "OCEAN_CLUB").forEach(function(newPostOcean){
+  globalPostingsOcean.push(newPostOcean);
+  console.log("OCEAN: ", newPostOcean);
+});
 
 //runs program every 3 minutes
 setInterval(function() {
-  runner();
-  var request = makeHttpObject();
-  request.open("GET", ENV_APP_URL, true);
+  sendTexts=true;
+  runner(SURF_CLUB_URL, globalPostingsSurf, "SURF_CLUB").forEach(function(newPostSurf){
+    globalPostingsSurf.push(newPostSurf);
+    console.log("SURF: ", newPostSurf);
+  });
+  var requestSurf = makeHttpObject();
+  requestSurf.open("GET", ENV_APP_URL, true);
 }, 60000);
+
+setInterval(function(){
+  sendTexts=true;
+  runner(OCEAN_CLUB_URL, globalPostingsOcean, "OCEAN_CLUB").forEach(function(newPostOcean){
+    globalPostingsOcean.push(newPostOcean);
+    console.log("OCEAN: ", newPostOcean);
+  });
+}, 66000);
