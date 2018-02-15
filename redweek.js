@@ -43,11 +43,20 @@ function makeHttpObject() {
 //determines if there are new postings and sends text
 function comparePostings(globalPosts, newPosts, resort) {
   let textMessage = "";
-  let addToGlobal = new Array(newPosts);
   newPosts.forEach(function(newPost) {
-   if(!globalPosts.includes(newPost)){
-    addToGlobal.push(newPost);
-    textMessage=textMessage.concat("https://www.redweek.com"+newPost+" \r\n")
+    if(!globalPosts.includes(newPost)) {
+      if(resort === "SURF_CLUB"){
+        console.log("SURF: ",newPost)
+        globalPostingsSurf.push(newPost)
+      }
+      else if(resort === "OCEAN_CLUB"){
+        console.log("OCEAN: ",newPost)
+        globalPostingsOcean.push(newPost)
+      }
+      else{
+        console.log("RESORT_ERROR")
+      }
+     textMessage=textMessage.concat("https://www.redweek.com"+newPost+" \r\n")
    }
   });
   if(textMessage!="" && sendTexts) {
@@ -73,11 +82,9 @@ function comparePostings(globalPosts, newPosts, resort) {
         process.stdout.write(message.sid);
       }
     );
-    return addToGlobal;
   }
   else{
     console.log("no new listings, no text message sent");
-    return addToGlobal;
   }
 }
 
@@ -94,18 +101,17 @@ function runner(url, global, resort){
       //this sizing could be a problem if I keep using .push()
       let filtered = new Array(rawPostings)
       filtered = unique(rawPostings);
-      return comparePostings(global, filtered, resort);
+      comparePostings(global, filtered, resort);
       
     }
   };
   console.log("shouldnt reach this")
-  return [];
 }
 
-runner(SURF_CLUB_URL, globalPostingsSurf, "SURF_CLUB").forEach(function(newPostSurf){
-  globalPostingsSurf.push(newPostSurf);
-  console.log("SURF1: ", newPostSurf);
-});
+runner(SURF_CLUB_URL, globalPostingsSurf, "SURF_CLUB");//.forEach(function(newPostSurf){
+//   globalPostingsSurf.push(newPostSurf);
+//   console.log("SURF1: ", newPostSurf);
+// });
 // runner(OCEAN_CLUB_URL, globalPostingsOcean, "OCEAN_CLUB").forEach(function(newPostOcean){
 //   globalPostingsOcean.push(newPostOcean);
 //   console.log("OCEAN1: ", newPostOcean);
@@ -114,10 +120,10 @@ runner(SURF_CLUB_URL, globalPostingsSurf, "SURF_CLUB").forEach(function(newPostS
 //runs program every 3 minutes
 setInterval(function() {
   //sendTexts=true;
-  runner(SURF_CLUB_URL, globalPostingsSurf, "SURF_CLUB").forEach(function(newPostSurf){
-    globalPostingsSurf.push(newPostSurf);
-    console.log("SURF2: ", newPostSurf);
-  });
+  runner(SURF_CLUB_URL, globalPostingsSurf, "SURF_CLUB");//.forEach(function(newPostSurf){
+  //   globalPostingsSurf.push(newPostSurf);
+  //   console.log("SURF2: ", newPostSurf);
+  // });
   console.log("DONE ADDING------------------------")
   var requestSurf = makeHttpObject();
   requestSurf.open("GET", ENV_APP_URL, true);
