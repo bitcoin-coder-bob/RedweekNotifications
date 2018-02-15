@@ -46,11 +46,11 @@ function comparePostings(globalPosts, newPosts, resort) {
   newPosts.forEach(function(newPost) {
     if(!globalPosts.includes(newPost)) {
       if(resort === "SURF_CLUB"){
-        console.log("ADDED SURF---");
+        console.log("ADDED SURF---",newPost);
         globalPostingsSurf.push(newPost);
       }
       else if(resort === "OCEAN_CLUB"){
-        console.log("ADDED OCEAN---");
+        console.log("ADDED OCEAN---",newPost);
         globalPostingsOcean.push(newPost);
       }
       else{
@@ -102,7 +102,6 @@ function runner(url, global, resort){
       let filtered = new Array(rawPostings);
       filtered = unique(rawPostings);
       comparePostings(global, filtered, resort);
-      
     }
   };
   console.log("shouldnt reach this")
@@ -116,10 +115,10 @@ setInterval(function() {
   //sendTexts=true;
   runner(SURF_CLUB_URL, globalPostingsSurf, "SURF_CLUB");
   console.log("SURF: ", globalPostingsSurf);
-}, 6000);
+}, 10000);
 
 setInterval(function(){
   //sendTexts=true;
   runner(OCEAN_CLUB_URL, globalPostingsOcean, "OCEAN_CLUB");
   console.log("OCEAN: ", globalPostingsOcean);
-}, 66000);
+}, 15000);
