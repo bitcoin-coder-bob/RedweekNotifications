@@ -11,10 +11,10 @@ const ENV_ACCOUNT_SID = process.env.accountSid;
 const ENV_AUTH_TOKEN = process.env.authToken;
 const ENV_FROM = process.env.from;
 const ENV_TO = process.env.to;
-const ENV_TO2 = process.env.to2;
 const ENV_APP_URL = process.env.appURL;
 const SURF_CLUB_URL = 'https://www.redweek.com/resort/P4872-marriotts-aruba-surf-club/rentals?sort-rentals=newest&amp;type=rentals&amp;sort=newest';
 const OCEAN_CLUB_URL = 'https://www.redweek.com/resort/P148-marriotts-aruba-ocean-club/rentals?sort-rentals=newest&amp;type=rentals&amp;sort=newest';
+
 const client = require('twilio')(ENV_ACCOUNT_SID, ENV_AUTH_TOKEN);
 var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 var unique = require('array-unique');
@@ -22,9 +22,7 @@ var express = require('express');
 var server = express();
 var server_port = ENV_PORT  || 80;
 var server_host = '0.0.0.0';
-server.listen(server_port, server_host, function() {
-    console.log('Listening on port %d', server_port);
-});
+
 var sendTexts = false;
 var globalPostingsSurf = [];
 var globalPostingsOcean = [];
@@ -69,16 +67,6 @@ function comparePostings(globalPosts, newPosts, resort) {
         process.stdout.write(message.sid);
       }
     );
-    client.messages.create(
-      {
-        body: textMessage,
-        to: ENV_TO2,
-        from: ENV_FROM
-      },
-      (err, message) => {
-        process.stdout.write(message.sid);
-      }
-    );
   }
   else{
     console.log("no new listings or text: ",resort);
@@ -103,14 +91,21 @@ function runner(url, global, resort){
   };
 }
 
+server.listen(server_port, server_host, function() {
+  console.log('Listening on port %d', server_port);
+});
+
+//populate global posting arrays
 runner(SURF_CLUB_URL, globalPostingsSurf, "SURF_CLUB");
 runner(OCEAN_CLUB_URL, globalPostingsOcean, "OCEAN_CLUB");
 
+//run the checker every 2 minutes 
 setInterval(function() {
   sendTexts=true;
   runner(SURF_CLUB_URL, globalPostingsSurf, "SURF_CLUB");
 }, 120000);
 
+//run checker every 2 minutes 10 seconds
 setInterval(function(){
   sendTexts=true;
   runner(OCEAN_CLUB_URL, globalPostingsOcean, "OCEAN_CLUB");
