@@ -80,7 +80,7 @@ function runner(url, global, resort){
   request.send(null);
   request.onreadystatechange = function() {
     //gets the regex: /posting/R
-    let regex = /\/posting\/R....../g;
+    let regex = /\/posting\/R......./g;
     if (request.readyState == 4){
       let rawPostings = request.responseText.match(regex);
       //this sizing could be a problem if I keep using .push()
